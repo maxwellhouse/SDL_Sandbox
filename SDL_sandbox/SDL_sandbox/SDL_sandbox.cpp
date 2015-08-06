@@ -123,21 +123,21 @@ bool loadMedia()
     bool success = true;
 
     //Load sprite sheet texture
-    if( gBackgroundTexture.loadFromFile( "../../../images/background/space.png" ) == false )
+    if( gBackgroundTexture.loadFromFile( "../../images/background/space.png" ) == false )
     {
         printf( "Failed to load background texture!\n" );
         success = false;
     }
 
     //Load sprite sheet texture
-    if( gSpriteSheetAnimationTexture.loadFromFile( "../../../images/animation/spritesheet.png" ) == false )
+    if( gSpriteSheetAnimationTexture.loadFromFile( "../../images/animation/spritesheet.png" ) == false )
     {
         printf( "Failed to load sprite sheet texture!\n" );
         success = false;
     }
 
     //Load bullet sprite sheet texture
-    if( gSpriteSheetBullets.loadFromFile( "../../../images/ammo/lazerBullets.png" ) == false )
+    if( gSpriteSheetBullets.loadFromFile( "../../images/ammo/lazerBullets.png" ) == false )
     {
         printf( "Failed to load sprite sheet bullets!\n" );
         success = false;
@@ -152,7 +152,7 @@ bool loadFont()
     bool success = true;
 
     //Open the font
-    gFont = TTF_OpenFont( "../../../fonts/BodoniFLF-Roman.ttf", 28 );
+    gFont = TTF_OpenFont( "../../fonts/BodoniFLF-Roman.ttf", 28 );
     if( gFont == NULL )
     {
         printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
@@ -318,7 +318,7 @@ int main(int argc, char* argv[])
                     //Reset the offset
                     bgY = 0;
                 }
-                    
+
                 //Render background texture to screen
                 gBackgroundTexture.render( bgX, bgY );
                 gBackgroundTexture.render( bgX, bgY - gBackgroundTexture.getHeight() );
