@@ -68,6 +68,14 @@ void CreateBulletColorMap()
 
     gBulletColorMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Normal, tBullet::eBC_Pink), pink_normal_bullet));
     gBulletColorMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Super, tBullet::eBC_Pink), pink_super_bullet));
+
+    SDL_Rect blue_enemy_bullet;
+    blue_enemy_bullet.x = 154;
+    blue_enemy_bullet.y = 269;
+    blue_enemy_bullet.w = 10;
+    blue_enemy_bullet.h = 10;    
+
+    gBulletColorMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Enemy, tBullet::eBC_Blue), blue_enemy_bullet));
 }
 
 
@@ -94,6 +102,13 @@ m_Color(color)
             m_Speed = 10;
         }
         break;
+    case eBT_Enemy:
+        {
+            m_HalfWidth = NORMAL_WIDTH / 2;
+            // negative speed so that the bullets go down
+            m_Speed = -5;
+        }
+        break;
     default:
         {
             printf( "Bullet type not found!\n");
@@ -107,7 +122,7 @@ bool tBullet::render()
     bool success = m_pTexture->render(m_xPos - m_HalfWidth , m_yPos, &gBulletColorMap.find(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(m_Type,m_Color))->second);
     m_yPos -= m_Speed;
 
-    if(m_yPos < 0)
+    if(m_yPos < 0 || m_yPos > SCREEN_HEIGHT)
     {
         success = false;
     }

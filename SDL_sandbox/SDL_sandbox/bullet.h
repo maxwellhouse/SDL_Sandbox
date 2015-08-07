@@ -12,6 +12,8 @@ public:
     {
         eBT_Normal,
         eBT_Super,
+
+        eBT_Enemy,
         eBT_End,
     };
 

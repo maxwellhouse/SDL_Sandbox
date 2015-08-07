@@ -13,8 +13,9 @@ public:
 public:
     bool loadTexture(const std::string& fileName);
     bool render();
-    void move(int x, int y);
-    void offsetMove(int x, int y);
+    bool move(int x, int y);
+    bool offsetMove(int x, int y);
+    bool checkCollison(const tActor* pOther);
 
 protected:
     tTexture* m_pTexture;

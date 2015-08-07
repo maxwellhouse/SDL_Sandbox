@@ -1,5 +1,5 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef ENEMY_H
+#define ENEMY_H
 
 #include "actor.h"
 #include "bullet.h"
@@ -9,13 +9,13 @@
 class tBullet;
 class tTexture;
 
-class tPlayer : public tActor
+class tEnemy : public tActor
 {
 public:
-    tPlayer::tPlayer(unsigned int hp, int x, int y);
-    tPlayer::~tPlayer();
+    tEnemy::tEnemy(unsigned int hp, int x, int y);
+    tEnemy::~tEnemy();
 
-    bool AddBullet(tTexture* pTexture, const tBullet::eBulletType type);
+    bool AddBullet(tTexture* pTexture);
 
     bool render();
 
@@ -26,4 +26,4 @@ private:
     std::vector<tBullet*> m_currentBullets;
 };
 
-#endif  // PLAYER_H
+#endif  // ENEMY_H

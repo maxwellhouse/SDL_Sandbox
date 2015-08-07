@@ -1,34 +1,23 @@
-#include "player.h"
+#include "enemy.h"
 #include "texture.h"
 
 #define MAX_BULLETS 100
 
-// Get random number between min and max
-int roll(int min, int max)
-{
-    // x is in [0,1[
-    double x = rand()/static_cast<double>(RAND_MAX+1); 
 
-    // [0,1[ * (max - min) + min is in [min,max[
-    int that = min + static_cast<int>( x * (max - min) );
-
-    return that;
-}
-
-tPlayer::tPlayer(unsigned int hp, int x, int y) :
+tEnemy::tEnemy(unsigned int hp, int x, int y) :
 tActor(x,y)
 , m_Hp(hp)
 {
     //Load player sprite texture
-    if( loadTexture("../../images/ships/player_ship.png") == false )
+    if( loadTexture("../../images/ships/enemy_1.png") == false )
     {
-        printf( "Failed to load player ship texture!\n");
+        printf( "Failed to load enemy ship texture!\n");
     }
 
     m_HalfWidth = m_pTexture->getWidth() / 2;
 }
 
-tPlayer::~tPlayer()
+tEnemy::~tEnemy()
 {
     for(std::vector<tBullet*>::iterator it = m_currentBullets.begin(); it != m_currentBullets.end(); ++it)
     {
@@ -37,19 +26,19 @@ tPlayer::~tPlayer()
     m_currentBullets.clear();
 }
 
-bool tPlayer::AddBullet(tTexture* pTexture, const tBullet::eBulletType type)
+bool tEnemy::AddBullet(tTexture* pTexture)
 {
     bool success = false;
     if(m_currentBullets.size() < MAX_BULLETS)
     {
-        tBullet* bullet = new tBullet(m_xPos + m_HalfWidth, m_yPos, pTexture, static_cast<tBullet::eBulletColor>(roll(0,4)), type);
+        tBullet* bullet = new tBullet(m_xPos + m_HalfWidth, m_yPos, pTexture, tBullet::eBC_Blue, tBullet::eBT_Enemy);
         m_currentBullets.push_back(bullet);
         success = true;
     }
     return success;
 }
 
-bool tPlayer::render()
+bool tEnemy::render()
 {
     // Render player
     bool success = m_pTexture->render(m_xPos, m_yPos);
