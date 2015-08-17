@@ -24,6 +24,13 @@ std::map<KeyPressSurfaces, SDL_Rect*> gKeyPressImageRecs;
 // Scene textures
 tTexture gBackgroundTexture;
 
+// Player texture
+tTexture gPlayerTexture;
+
+// Enemy texture
+tTexture gEnemyTexture;
+tTexture gEnemyExplosionTexture;
+
 // Scene sprites
 SDL_Rect gSpriteClips[5];
 tTexture gSpriteSheetBullets;
@@ -35,23 +42,6 @@ tTexture gSpriteSheetAnimationTexture;
 
 // Rendered texture
 tTexture gTextTexture;
-
-// Our test callback function
-int gFps = 0;
-Uint32 callback(Uint32 interval, void* param)
-{
-    // Print callback message
-    std::stringstream sstm;
-    sstm << gFps;
-    std::string result = sstm.str();
-
-    SDL_Color fpsColor = {0, 0, 0};
-    gTextTexture.loadFromRenderedText(result, fpsColor);
-    gFps = 0;
-
-    return 0;
-}
-
 
 // Frees media and shuts down SDL
 void close();
@@ -145,6 +135,27 @@ bool loadMedia()
         success = false;
     }
 
+    // Load enemy sprite
+    if( gEnemyTexture.loadFromFile("../../images/ships/enemy_1.png") == false )
+    {
+        printf( "Failed to load enemy ship texture!\n");
+        success = false;
+    }
+
+    //Load player sprite texture
+    if( gPlayerTexture.loadFromFile("../../images/ships/player_ship.png") == false )
+    {
+        printf( "Failed to load player ship texture!\n");
+        success = false;
+    }
+
+    //Load enemy explosion texture
+    if( gEnemyExplosionTexture.loadFromFile("../../images/explosion/explosion_transparent.png") == false )
+    {
+        printf( "Failed to load enemy explosion texture!\n");
+        success = false;
+    }
+
     return success;
 }
 
@@ -159,10 +170,6 @@ bool loadFont()
     {
         printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
         success = false;
-    }
-    else
-    {
-        callback(gFps, 0);
     }
 
     return success;
@@ -213,7 +220,7 @@ int main(int argc, char* argv[])
             SDL_Rect* pSpriteRect = gKeyPressImageRecs[KEY_PRESS_SURFACE_DEFAULT];
 
             // Create player
-            tPlayer Player(100, 0, SCREEN_WIDTH);
+            tPlayer Player(100, 0, SCREEN_WIDTH, &gPlayerTexture);
 
             // Movement
             int mov_x = 0;
@@ -225,11 +232,16 @@ int main(int argc, char* argv[])
             int enmyX = 1;
             int enemySpeed = 1;
 
+            // Score
+            int totalScore = 0;
+            std::string score = "Score: ";
+            SDL_Color scoreColor = {255, 0, 255};
+
             // Create list of enemies
             std::vector<tEnemy*> enemyList;
             for (int i = 0; i < 1; i++)
             {
-                enemyList.push_back(new tEnemy(1, SCREEN_HEIGHT / 2, 0));
+                enemyList.push_back(new tEnemy(1, SCREEN_HEIGHT / 2, 0, &gEnemyTexture, &gEnemyExplosionTexture));
             }
 
             // Enemy direction
@@ -237,9 +249,6 @@ int main(int argc, char* argv[])
 
             // Flip type
             SDL_RendererFlip flipType = SDL_FLIP_NONE;
-
-            // Set callback
-            SDL_TimerID timerID = SDL_AddTimer(1000, callback, "1 seconds waited!");
 
             // While application is running
             while (!quit)
@@ -262,29 +271,6 @@ int main(int argc, char* argv[])
                         // Select surfaces based on key press
                         switch (e.key.keysym.sym)
                         {
-                        case SDLK_q:
-                            break;
-
-                        case SDLK_w:
-                            break;
-
-                        case SDLK_e:
-                            break;
-
-                        case SDLK_a:
-                            break;
-
-                        case SDLK_s:
-                            break;
-
-                        case SDLK_d:
-                            break;
-
-                        case SDLK_p:
-                            break;
-
-                        case SDLK_l:
-                            break;
 
                         case SDLK_UP:
                             Player.AddBullet(&gSpriteSheetBullets, tBullet::eBT_Super);
@@ -340,6 +326,16 @@ int main(int argc, char* argv[])
                     }
                     (*enemy)->offsetMove(enemySpeed, 0);
                     (*enemy)->render();
+
+                    if(Player.Hit(*enemy) == true)
+                    {
+                        totalScore++;
+                    }
+
+                    if((*enemy)->Hit(&Player) == true)
+                    {
+                        while(0);
+                    }
                 }
 
                 if (enmyX == 0 || enmyX == SCREEN_WIDTH)
@@ -364,13 +360,13 @@ int main(int argc, char* argv[])
                 //    frame = 0;
                 //}
 
-                // Render current frame
-                // gTextTexture.render( ( SCREEN_WIDTH - gTextTexture.getWidth() ) / 2, gTextTexture.getHeight() );
+                // Render current text
+                gTextTexture.loadFromRenderedText(score + std::to_string((long double)totalScore), scoreColor);
+                gTextTexture.render( ( SCREEN_WIDTH - gTextTexture.getWidth() ) / 2, gTextTexture.getHeight() );
 
                 // Update screen
                 SDL_RenderPresent(gRenderer);
 
-                gFps++;
             }
         }
     }

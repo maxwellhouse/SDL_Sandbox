@@ -93,17 +93,23 @@ m_Color(color)
     case eBT_Normal:
         {
             m_Speed = 5;
+            m_Width = NORMAL_WIDTH;
+            m_Height = NORMAL_HEIGHT;
             m_HalfWidth = NORMAL_WIDTH / 2;
         }
         break;
     case eBT_Super:
         {
+            m_Width = SUPER_WIDTH;
+            m_Height = SUPER_HEIGHT;
             m_HalfWidth = SUPER_WIDTH / 2;
             m_Speed = 10;
         }
         break;
     case eBT_Enemy:
         {
+            m_Width = SUPER_WIDTH;
+            m_Height = SUPER_HEIGHT;
             m_HalfWidth = NORMAL_WIDTH / 2;
             // negative speed so that the bullets go down
             m_Speed = -5;

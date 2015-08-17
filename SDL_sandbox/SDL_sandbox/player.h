@@ -12,17 +12,17 @@ class tTexture;
 class tPlayer : public tActor
 {
 public:
-    tPlayer::tPlayer(unsigned int hp, int x, int y);
+    tPlayer::tPlayer(unsigned int hp, int x, int y, tTexture* pTexture);
     tPlayer::~tPlayer();
 
     bool AddBullet(tTexture* pTexture, const tBullet::eBulletType type);
+
+    bool Hit(const tActor* shotTarget);
 
     bool render();
 
 private:
     unsigned int m_Hp;
-    // So we dont have to divide everytime.
-    int m_HalfWidth;
     std::vector<tBullet*> m_currentBullets;
 };
 

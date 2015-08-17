@@ -2,17 +2,22 @@
 #include "texture.h"
 #include "globals.h"
 
-tActor::tActor(int x, int y):
+tActor::tActor(int x, int y, tTexture* pTexture):
 m_xPos(x)
 , m_yPos(y)
+, m_pTexture(pTexture)
 {
-    m_pTexture = new tTexture();
+    if(m_pTexture)
+    {
+        m_Width = m_pTexture->getWidth();
+        m_Height = m_pTexture->getHeight();
+        m_HalfWidth = m_Width / 2;
+    }
 }
 
 tActor::~tActor()
 {
-    delete m_pTexture;
-    m_pTexture = 0;
+
 }
 
 bool tActor::move(int x, int y)
@@ -42,7 +47,7 @@ bool tActor::offsetMove(int x, int y)
     return success;
 }
 
-bool tActor::checkCollison(const tActor* pOther)
+bool tActor::checkCollison(const tActor* pOther) const
 {
     int left1, left2;
     int right1, right2;
@@ -52,14 +57,14 @@ bool tActor::checkCollison(const tActor* pOther)
     left1 = m_xPos;
     left2 = pOther->m_xPos;
 
-    right1 = left1 + m_pTexture->getWidth() - 1;
-    right2 = left2 + pOther->m_pTexture->getWidth() - 1;
+    right1 = left1 + m_Width - 1;
+    right2 = left2 + pOther->m_Width - 1;
 
     top1 = m_yPos;
     top2 = pOther->m_yPos;
 
-    bottom1 = top1 + m_pTexture->getHeight() - 1;
-    bottom2 = top2 + pOther->m_pTexture->getHeight() - 1;
+    bottom1 = top1 + m_Height - 1;
+    bottom2 = top2 + pOther->m_Height - 1;
 
 
     if (bottom1 < top2) return false;
@@ -78,5 +83,9 @@ bool tActor::render()
 
 bool tActor::loadTexture(const std::string& fileName)
 {
-    return m_pTexture->loadFromFile(fileName);
+    bool success =  m_pTexture->loadFromFile(fileName);
+    m_Width = m_pTexture->getWidth();
+    m_Height = m_pTexture->getHeight();
+    m_HalfWidth = m_Width / 2;
+    return success;
 }

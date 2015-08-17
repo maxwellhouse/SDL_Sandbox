@@ -4,17 +4,12 @@
 #define MAX_BULLETS 100
 
 
-tEnemy::tEnemy(unsigned int hp, int x, int y) :
-tActor(x,y)
+tEnemy::tEnemy(unsigned int hp, int x, int y, tTexture* pTexture, tTexture* pExplosionTexture) :
+tActor(x,y, pTexture)
 , m_Hp(hp)
+, m_pExplosionTexture(pExplosionTexture)
 {
-    //Load player sprite texture
-    if( loadTexture("../../images/ships/enemy_1.png") == false )
-    {
-        printf( "Failed to load enemy ship texture!\n");
-    }
 
-    m_HalfWidth = m_pTexture->getWidth() / 2;
 }
 
 tEnemy::~tEnemy()
@@ -36,6 +31,18 @@ bool tEnemy::AddBullet(tTexture* pTexture)
         success = true;
     }
     return success;
+}
+
+bool tEnemy::Hit(const tActor* shotTarget)
+{
+    for(std::vector<tBullet*>::iterator bullet = m_currentBullets.begin(); bullet != m_currentBullets.end(); bullet++)
+    {
+        if(shotTarget->checkCollison(*bullet))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool tEnemy::render()

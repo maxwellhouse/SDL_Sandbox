@@ -15,17 +15,10 @@ int roll(int min, int max)
     return that;
 }
 
-tPlayer::tPlayer(unsigned int hp, int x, int y) :
-tActor(x,y)
+tPlayer::tPlayer(unsigned int hp, int x, int y, tTexture* pTexture) :
+tActor(x,y, pTexture)
 , m_Hp(hp)
 {
-    //Load player sprite texture
-    if( loadTexture("../../images/ships/player_ship.png") == false )
-    {
-        printf( "Failed to load player ship texture!\n");
-    }
-
-    m_HalfWidth = m_pTexture->getWidth() / 2;
 }
 
 tPlayer::~tPlayer()
@@ -47,6 +40,23 @@ bool tPlayer::AddBullet(tTexture* pTexture, const tBullet::eBulletType type)
         success = true;
     }
     return success;
+}
+
+bool tPlayer::Hit(const tActor* shotTarget)
+{
+    for(std::vector<tBullet*>::iterator bullet = m_currentBullets.begin(); bullet != m_currentBullets.end();)
+    {
+        if(shotTarget->checkCollison(*bullet))
+        {
+            bullet = m_currentBullets.erase(bullet);
+            return true;
+        }
+        else
+        {
+            ++bullet;
+        }
+    }
+    return false;
 }
 
 bool tPlayer::render()

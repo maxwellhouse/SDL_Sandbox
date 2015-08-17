@@ -12,10 +12,12 @@ class tTexture;
 class tEnemy : public tActor
 {
 public:
-    tEnemy::tEnemy(unsigned int hp, int x, int y);
+    tEnemy::tEnemy(unsigned int hp, int x, int y, tTexture* pTexture, tTexture* pExplosionTexture);
     tEnemy::~tEnemy();
 
     bool AddBullet(tTexture* pTexture);
+
+    bool Hit(const tActor* shotTarget);
 
     bool render();
 
@@ -24,6 +26,7 @@ private:
     // So we dont have to divide everytime.
     int m_HalfWidth;
     std::vector<tBullet*> m_currentBullets;
+    tTexture* m_pExplosionTexture;
 };
 
 #endif  // ENEMY_H

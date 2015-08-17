@@ -33,10 +33,6 @@ public:
 private:
     eBulletType m_Type;
     eBulletColor m_Color;
-    // So we dont have to divide everytime.
-    int m_HalfWidth;
-    int m_Speed;
-
 };
 
 #endif  // BULLET_H
