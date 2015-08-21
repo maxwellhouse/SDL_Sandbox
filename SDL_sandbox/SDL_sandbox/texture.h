@@ -24,16 +24,16 @@ public:
     ~tTexture();
 
     // Loads image at specified path
-    bool loadFromFile(std::string path);
+    bool loadFromFile(std::string path, SDL_Renderer* pRenderer);
 
     // Creates image from font string
-    bool loadFromRenderedText(std::string textureText, SDL_Color textColor);
+    bool loadFromRenderedText(std::string textureText, SDL_Color textColor, SDL_Renderer* pRenderer, TTF_Font* pFont);
 
     // Deallocates texture
     void free();
 
     // Renders texture at given point
-    bool render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+    bool render(SDL_Renderer* pRenderer, int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
     // Set color modulation
     void setColor(Uint8 red, Uint8 green, Uint8 blue);
@@ -50,11 +50,11 @@ public:
 
 private:
     // The actual hardware texture
-    SDL_Texture* mTexture;
+    SDL_Texture* m_pTexture;
 
     // Image dimensions
-    int mWidth;
-    int mHeight;
+    int m_Width;
+    int m_Height;
 };
 
 #endif // TEXTURE_H

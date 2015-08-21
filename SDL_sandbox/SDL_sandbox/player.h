@@ -8,6 +8,7 @@
 // Forward declare
 class tBullet;
 class tTexture;
+struct SDL_Renderer;
 
 class tPlayer : public tActor
 {
@@ -19,7 +20,7 @@ public:
 
     bool Hit(const tActor* shotTarget);
 
-    bool render();
+    bool render(SDL_Renderer* pRenderer);
 
 private:
     unsigned int m_Hp;

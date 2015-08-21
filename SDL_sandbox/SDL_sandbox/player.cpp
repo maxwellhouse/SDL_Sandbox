@@ -59,15 +59,15 @@ bool tPlayer::Hit(const tActor* shotTarget)
     return false;
 }
 
-bool tPlayer::render()
+bool tPlayer::render(SDL_Renderer* pRenderer)
 {
     // Render player
-    bool success = m_pTexture->render(m_xPos, m_yPos);
+    bool success = m_pTexture->render(pRenderer, m_xPos, m_yPos);
 
     // Render bullets fired
     for(std::vector<tBullet*>::iterator it = m_currentBullets.begin(); it != m_currentBullets.end();)
     {
-        if((*it)->render() == false)
+        if((*it)->render(pRenderer) == false)
         {
             it = m_currentBullets.erase(it);
         }

@@ -10,5 +10,9 @@
 //Using SDL and standard IO
 #include <stdio.h>
 #include <string>
+#include <assert.h>
+#include <sstream>
+#include <map>
+#include <vector>
 
 // TODO: reference additional headers your program requires here

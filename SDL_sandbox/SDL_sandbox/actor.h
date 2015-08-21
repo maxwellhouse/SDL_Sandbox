@@ -3,6 +3,7 @@
 #include <string>
 
 class tTexture;
+struct SDL_Renderer;
 
 class tActor
 {
@@ -11,11 +12,12 @@ public:
     ~tActor();
 
 public:
-    bool loadTexture(const std::string& fileName);
-    bool render();
+    bool loadTexture(SDL_Renderer* pRenderer, const std::string& fileName);
+    bool render(SDL_Renderer* pRenderer);
     bool move(int x, int y);
     bool offsetMove(int x, int y);
     bool checkCollison(const tActor* pOther) const;
+    std::pair<int, int> GetPos() const;
 
 protected:
     tTexture* m_pTexture;

@@ -76,16 +76,21 @@ bool tActor::checkCollison(const tActor* pOther) const
     return true;
 }
 
-bool tActor::render()
+bool tActor::render(SDL_Renderer* pRenderer)
 {
-    return m_pTexture->render(m_xPos, m_yPos);
+    return m_pTexture->render(pRenderer, m_xPos, m_yPos);
 }
 
-bool tActor::loadTexture(const std::string& fileName)
+bool tActor::loadTexture(SDL_Renderer* pRenderer, const std::string& fileName)
 {
-    bool success =  m_pTexture->loadFromFile(fileName);
+    bool success =  m_pTexture->loadFromFile(fileName, pRenderer);
     m_Width = m_pTexture->getWidth();
     m_Height = m_pTexture->getHeight();
     m_HalfWidth = m_Width / 2;
     return success;
+}
+
+std::pair<int, int> tActor::GetPos() const
+{
+    return std::pair<int, int>(m_xPos, m_yPos);
 }

@@ -5,16 +5,16 @@
 tTexture::tTexture()
 {
     // Initialize
-    mTexture = NULL;
-    mWidth = 0;
-    mHeight = 0;
+    m_pTexture = NULL;
+    m_Width = 0;
+    m_Height = 0;
 }
 
 tTexture::tTexture(const tTexture& other)
 {
-    mWidth = other.getWidth();
-    mHeight = other.getHeight();
-    memcpy(mTexture, other.mTexture, sizeof(other.mTexture));
+    m_Width = other.getWidth();
+    m_Height = other.getHeight();
+    memcpy(m_pTexture, other.m_pTexture, sizeof(other.m_pTexture));
 }
 
 
@@ -27,16 +27,16 @@ tTexture::~tTexture()
 void tTexture::free()
 {
     // Free texture if it exists
-    if (mTexture != NULL)
+    if (m_pTexture != NULL)
     {
-        SDL_DestroyTexture(mTexture);
-        mTexture = NULL;
-        mWidth = 0;
-        mHeight = 0;
+        SDL_DestroyTexture(m_pTexture);
+        m_pTexture = NULL;
+        m_Width = 0;
+        m_Height = 0;
     }
 }
 
-bool tTexture::loadFromFile(std::string path)
+bool tTexture::loadFromFile(std::string path, SDL_Renderer* pRenderer)
 {
     // Get rid of preexisting texture
     free();
@@ -59,7 +59,7 @@ bool tTexture::loadFromFile(std::string path)
         }
 
         // Create texture from surface pixels
-        newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+        newTexture = SDL_CreateTextureFromSurface(pRenderer, loadedSurface);
         if (newTexture == NULL)
         {
             printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
@@ -67,8 +67,8 @@ bool tTexture::loadFromFile(std::string path)
         else
         {
             // Get image dimensions
-            mWidth = loadedSurface->w;
-            mHeight = loadedSurface->h;
+            m_Width = loadedSurface->w;
+            m_Height = loadedSurface->h;
         }
 
         // Get rid of old loaded surface
@@ -76,19 +76,19 @@ bool tTexture::loadFromFile(std::string path)
     }
 
     // Return success
-    mTexture = newTexture;
-    return mTexture != NULL;
+    m_pTexture = newTexture;
+    return m_pTexture != NULL;
 }
 
 
-bool tTexture::loadFromRenderedText(std::string textureText, SDL_Color textColor)
+bool tTexture::loadFromRenderedText(std::string textureText, SDL_Color textColor, SDL_Renderer* pRenderer, TTF_Font* pFont)
 {
     // Get rid of preexisting texture
     free();
 
     // Render text surface
     SDL_Color bkColor = {0, 0, 0};
-    SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
+    SDL_Surface* textSurface = TTF_RenderText_Solid(pFont, textureText.c_str(), textColor);
     if (textSurface == NULL)
     {
         printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
@@ -96,16 +96,16 @@ bool tTexture::loadFromRenderedText(std::string textureText, SDL_Color textColor
     else
     {
         // Create texture from surface pixels
-        mTexture = SDL_CreateTextureFromSurface(gRenderer, textSurface);
-        if (mTexture == NULL)
+        m_pTexture = SDL_CreateTextureFromSurface(pRenderer, textSurface);
+        if (m_pTexture == NULL)
         {
             printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
         }
         else
         {
             // Get image dimensions
-            mWidth = textSurface->w;
-            mHeight = textSurface->h;
+            m_Width = textSurface->w;
+            m_Height = textSurface->h;
         }
 
         // Get rid of old surface
@@ -113,13 +113,13 @@ bool tTexture::loadFromRenderedText(std::string textureText, SDL_Color textColor
     }
 
     // Return success
-    return mTexture != NULL;
+    return m_pTexture != NULL;
 }
 
-bool tTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+bool tTexture::render(SDL_Renderer* pRenderer, int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
     // Set rendering space and render to screen
-    SDL_Rect renderQuad = {x, y, mWidth, mHeight};
+    SDL_Rect renderQuad = {x, y, m_Width, m_Height};
 
     // Set clip rendering dimensions
     if (clip != NULL)
@@ -129,7 +129,7 @@ bool tTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
     }
 
     // Render to screen
-    if (SDL_RenderCopyEx(gRenderer, mTexture, clip, &renderQuad, angle, center, flip) != 0)
+    if (SDL_RenderCopyEx(pRenderer, m_pTexture, clip, &renderQuad, angle, center, flip) != 0)
     {
         printf("Unable to render texture! SDL Error: %s\n", SDL_GetError());
         return false;
@@ -140,27 +140,27 @@ bool tTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 void tTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
 {
     // Modulate texture
-    SDL_SetTextureColorMod(mTexture, red, green, blue);
+    SDL_SetTextureColorMod(m_pTexture, red, green, blue);
 }
 
 void tTexture::setBlendMode(SDL_BlendMode blending)
 {
     // Set blending function
-    SDL_SetTextureBlendMode(mTexture, blending);
+    SDL_SetTextureBlendMode(m_pTexture, blending);
 }
 
 void tTexture::setAlpha(Uint8 alpha)
 {
     // Modulate texture alpha
-    SDL_SetTextureAlphaMod(mTexture, alpha);
+    SDL_SetTextureAlphaMod(m_pTexture, alpha);
 }
 
 int tTexture::getWidth() const
 {
-    return mWidth;
+    return m_Width;
 }
 
 int tTexture::getHeight() const
 {
-    return mHeight;
+    return m_Height;
 }
