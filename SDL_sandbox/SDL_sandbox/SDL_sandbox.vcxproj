@@ -86,18 +86,28 @@
     <ClInclude Include="bullet.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="gameEngine.h" />
+    <ClInclude Include="gameStateBase.h" />
+    <ClInclude Include="Math\spline.h" />
+    <ClInclude Include="Math\vector3D.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="playState.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="texture.h" />
+    <ClInclude Include="introState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="actor.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="gameEngine.cpp" />
+    <ClCompile Include="gameStateBase.cpp" />
     <ClCompile Include="globals.h" />
+    <ClCompile Include="introState.cpp" />
+    <ClCompile Include="Math\spline.cpp" />
+    <ClCompile Include="Math\vector3D.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="playState.cpp" />
     <ClCompile Include="SDL_sandbox.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="texture.cpp" />

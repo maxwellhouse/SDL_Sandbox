@@ -18,8 +18,6 @@ public:
     // Initializes variables
     tTexture();
 
-    tTexture(const tTexture& other);
-
     // Deallocates memory
     ~tTexture();
 
@@ -49,6 +47,9 @@ public:
     int getHeight() const;
 
 private:
+    // Disable copy constructor
+    tTexture(const tTexture& other) {};
+
     // The actual hardware texture
     SDL_Texture* m_pTexture;
 

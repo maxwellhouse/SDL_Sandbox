@@ -1,24 +1,14 @@
 // SDL_sandbox.cpp : Defines the entry point for the console application.
 //
 #include "gameEngine.h"
-
+#include "introState.h"
 #include "stdafx.h"
+#include "playState.h"
 
 // windows
 #ifdef WIN32
 #include<Windows.h>
 #endif
-
-unsigned getTickCount()
-{
-#ifdef WIN32
-    return GetTickCount();
-#else
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    return unsigned((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
-#endif
-}
 
 int main(int argc, char* argv[])
 {
@@ -32,27 +22,38 @@ int main(int argc, char* argv[])
     }
     else
     {
-        const int TICKS_PER_SECOND = 50;
-        const int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
+        // Create intro state
+        tIntroState::CreateInstance();
+        static tIntroState* pIntroState = tIntroState::Instance();
+        pIntroState->Init(pGameEngine);
+        pGameEngine->ChangeState(pIntroState);
+        //Create play state
+        tPlayState::CreateInstance();
+
         const int MAX_FRAMESKIP = 10;
-        unsigned next_game_tick = GetTickCount();
-        int loops;
-        float interpolation;
+        unsigned int previousTime = SDL_GetTicks();
+        double lag = 0;
 
         // While application is running
         while (pGameEngine->Running() == true)
         {
-            loops = 0;
-            while( GetTickCount() > next_game_tick && loops < MAX_FRAMESKIP) 
+            unsigned int currentTime = SDL_GetTicks();
+            unsigned int elapsed = currentTime - previousTime;
+            previousTime = currentTime;
+            lag += elapsed;
+            if(pGameEngine->HandleEvents())
             {
-                pGameEngine->HandleEvents();
-                pGameEngine->Update();
-                next_game_tick += SKIP_TICKS;
-                loops++;
-            }
-            interpolation = float( GetTickCount() + SKIP_TICKS - next_game_tick ) / float( SKIP_TICKS );
+                while( lag >= MAX_FRAMESKIP ) 
+                {
+                    pGameEngine->Update(lag / MAX_FRAMESKIP);
+                    lag -= MAX_FRAMESKIP;
+                } 
 
-            pGameEngine->Draw(interpolation);
+                if(pGameEngine->Running())
+                {
+                    pGameEngine->Draw();
+                }
+            }
         }
     }
 

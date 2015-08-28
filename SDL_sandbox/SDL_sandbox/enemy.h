@@ -1,14 +1,14 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
+#include "stdafx.h"
 #include "actor.h"
-#include "bullet.h"
-#include <vector>
 #include <SDL.h>
 
 // Forward declare
 class tBullet;
 class tTexture;
+class tCRSpline;
 // Animation sprite
 const int ANIMATION_FRAMES = 23;
 
@@ -26,13 +26,13 @@ public:
 
     SDL_Rect GetDeathClip(const unsigned int clip);
 private:
-    unsigned int m_Hp;
-    // So we dont have to divide everytime.
-    int m_HalfWidth;
+    int m_Hp;
     std::vector<tBullet*> m_currentBullets;
     tTexture* m_pExplosionTexture;
 
     std::vector<SDL_Rect> m_AnimationSpriteClips;
+
+    tCRSpline* m_pSplinePath;
 };
 
 #endif  // ENEMY_H

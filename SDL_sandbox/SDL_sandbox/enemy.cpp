@@ -1,8 +1,14 @@
 #include "enemy.h"
+#include "globals.h"
 #include "texture.h"
+#include "bullet.h"
+#include "Math/spline.h"
 
 #define MAX_BULLETS 100
-
+float frand( float n )
+{
+    return ((n)*((float)rand() / (float)RAND_MAX));
+}
 
 tEnemy::tEnemy(unsigned int hp, int x, int y, tTexture* pTexture, tTexture* pExplosionTexture) :
 tActor(x,y, pTexture)
@@ -125,6 +131,11 @@ tActor(x,y, pTexture)
     m_AnimationSpriteClips[ 22 ].y =  275;
     m_AnimationSpriteClips[ 22 ].w =  23;
     m_AnimationSpriteClips[ 22 ].h =  32;
+
+    // Create path
+    m_pSplinePath = new tCRSpline();
+    m_pSplinePath->AddSplinePoint(tVector3D(static_cast<float>(m_xPos), static_cast<float>(m_yPos), 0.0f));
+    m_pSplinePath->AddSplinePoint(tVector3D(static_cast<float>(m_xPos), static_cast<float>(-SCREEN_HEIGHT), 0.0f));
 }
 
 tEnemy::~tEnemy()
@@ -134,6 +145,11 @@ tEnemy::~tEnemy()
         delete *it;
     }
     m_currentBullets.clear();
+    if(m_pSplinePath)
+    {
+        delete m_pSplinePath;
+        m_pSplinePath = NULL;
+    }
 }
 
 bool tEnemy::AddBullet(tTexture* pTexture)
@@ -162,8 +178,9 @@ bool tEnemy::Hit(const tActor* shotTarget)
 
 bool tEnemy::render(SDL_Renderer* pRenderer)
 {
+    tVector3D newPosition = m_pSplinePath->GetInterpolatedSplinePoint(m_xPos);
     // Render player
-    bool success = m_pTexture->render(pRenderer, m_xPos, m_yPos);
+    bool success = m_pTexture->render(pRenderer, newPosition.m_x, newPosition.m_y);
 
     // Render bullets fired
     for(std::vector<tBullet*>::iterator it = m_currentBullets.begin(); it != m_currentBullets.end();)

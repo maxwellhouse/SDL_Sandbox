@@ -10,12 +10,24 @@ tTexture::tTexture()
     m_Height = 0;
 }
 
-tTexture::tTexture(const tTexture& other)
-{
-    m_Width = other.getWidth();
-    m_Height = other.getHeight();
-    memcpy(m_pTexture, other.m_pTexture, sizeof(other.m_pTexture));
-}
+//tTexture::tTexture(const tTexture& other)
+//{
+//    Copy(other);
+//}
+//
+//tTexture& tTexture::operator =(const tTexture &other)
+//{
+//    Copy(other);
+//    return *this;
+//}
+//
+//void tTexture::Copy(const tTexture& other)
+//{
+//    m_Width = other.getWidth();
+//    m_Height = other.getHeight();
+//    m_pTexture = new SDL_Texture(other.m_pTexture);
+//    memcpy(m_pTexture, other.m_pTexture, sizeof(other.m_pTexture));
+//}
 
 
 tTexture::~tTexture()
