@@ -15,15 +15,13 @@ void tPlayState::CreateInstance()
 
 tPlayState::tPlayState() :
     m_pPlayer(NULL),
-    m_EnemyXPos(1),
-    m_CurrentEnemySpeed(1),
     m_BackgroundXPos(0),
     m_BackgroundYPos(0),
     m_TotalScore(0),
     m_ScoreString("Score"),
     m_pBackgroundTexture(NULL),
     m_pPlayerTexture(NULL),
-    m_pSpriteSheetBullets(NULL),
+    m_pSpriteSheetWeapons(NULL),
     m_pEnemyTexture(NULL),
     m_pEnemyExplosionTexture(NULL),
     m_pTextTexture(NULL),
@@ -66,11 +64,11 @@ void tPlayState::Cleanup()
         delete m_pPlayerTexture;
         m_pPlayerTexture = NULL;
     }
-    if(m_pSpriteSheetBullets)
+    if(m_pSpriteSheetWeapons)
     {
-        m_pSpriteSheetBullets->free();
-        delete m_pSpriteSheetBullets;
-        m_pSpriteSheetBullets = NULL;
+        m_pSpriteSheetWeapons->free();
+        delete m_pSpriteSheetWeapons;
+        m_pSpriteSheetWeapons = NULL;
     }
     if(m_pEnemyTexture)
     {
@@ -110,10 +108,11 @@ void tPlayState::HandleEvents(tGameEngine* pGame)
         switch (pGame->Events()->key.keysym.sym)
         {
         case SDLK_UP:
-            m_pPlayer->AddBullet(m_pSpriteSheetBullets, tBullet::eBT_Super);
+            m_pPlayer->AddBullet(m_pSpriteSheetWeapons, tWeapon::eBT_Super);
             break;
 
         case SDLK_DOWN:
+            m_Enemies.push_back(new tEnemy(1, SCREEN_HEIGHT / 2, 0, m_pEnemyTexture, m_pEnemyExplosionTexture));
             break;
 
         case SDLK_LEFT:
@@ -129,7 +128,7 @@ void tPlayState::HandleEvents(tGameEngine* pGame)
             break;
 
         case SDLK_SPACE:
-            m_pPlayer->AddBullet(m_pSpriteSheetBullets, tBullet::eBT_Normal);
+            m_pPlayer->AddBullet(m_pSpriteSheetWeapons, tWeapon::eBT_Normal);
             break;
         default:
             break;
@@ -150,34 +149,31 @@ void tPlayState::Update(tGameEngine* pGame, const double interpolation)
     }
 
     // Render enemies
-    for (unsigned int enemyIndex = 0; enemyIndex < m_Enemies.size(); enemyIndex++)
+    for (std::vector<tEnemy*>::iterator enemyIt = m_Enemies.begin(); enemyIt != m_Enemies.end();)
     {
         if (rand() % 10 == 5)
         {
-            m_Enemies[enemyIndex]->AddBullet(m_pSpriteSheetBullets);
+            (*enemyIt)->AddBullet(m_pSpriteSheetWeapons);
         }
-        m_Enemies[enemyIndex]->offsetMove(m_CurrentEnemySpeed * interpolation, 0);
+        (*enemyIt)->move(interpolation);
 
-        if(m_Enemies[enemyIndex]->Hit(m_pPlayer) == true)
+        if((*enemyIt)->Hit(m_pPlayer) == true)
         {
         }
-        if(m_pPlayer->Hit(m_Enemies[enemyIndex]) == true)
+        if(m_pPlayer->Hit(*enemyIt) == true)
         {
             m_TotalScore++;
-            m_Enemies[enemyIndex]->wasHit(1);
-            if(m_Enemies[enemyIndex]->isDead() == true)
-            {
-                //std::pair<int,int> pos = m_Enemies[enemyIndex]->GetPos();
-                //gEnemyExplosionTexture.render(pos.first, pos.second, &enemyList[enemyIndex]->GetDeathClip(frame / 4));
-            }
+            (*enemyIt)->wasHit(1);
+        }
+        if((*enemyIt)->isDead() == true)
+        {
+            enemyIt = m_Enemies.erase(enemyIt);
+        }
+        else
+        {
+            ++enemyIt;
         }
     }
-
-    if (m_EnemyXPos == 0 || m_EnemyXPos == SCREEN_WIDTH)
-    {
-        m_CurrentEnemySpeed = -m_CurrentEnemySpeed;
-    }
-    m_EnemyXPos += m_CurrentEnemySpeed;
 }
 
 void tPlayState::Draw(tGameEngine* pGame)
@@ -221,8 +217,8 @@ bool tPlayState::LoadMedia(tGameEngine* pGame)
         success = false;
     }
 
-    m_pSpriteSheetBullets = new tTexture();
-    if (m_pSpriteSheetBullets && m_pSpriteSheetBullets->loadFromFile("../../images/ammo/lazerBullets.png", pGame->Renderer()) == false)
+    m_pSpriteSheetWeapons = new tTexture();
+    if (m_pSpriteSheetWeapons && m_pSpriteSheetWeapons->loadFromFile("../../images/ammo/lazerBullets.png", pGame->Renderer()) == false)
     {
         printf("Failed to load sprite sheet bullets!\n");
         success = false;

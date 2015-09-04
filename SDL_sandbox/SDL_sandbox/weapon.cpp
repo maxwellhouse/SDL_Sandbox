@@ -1,10 +1,10 @@
-#include "bullet.h"
+#include "weapon.h"
 #include "texture.h"
 #include "globals.h"
 
-std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect> tBullet::m_BulletColorMap = CreateBulletColorMap();
+std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect> tWeapon::m_BulletColorMap = CreateBulletColorMap();
 
-tBullet::tBullet(int x, int y, tTexture* pTexture, eBulletColor color, eBulletType bulletType) :
+tWeapon::tWeapon(int x, int y, tTexture* pTexture, eBulletColor color, eBulletType bulletType) :
 tActor(x,y),
 m_Type(bulletType),
 m_Color(color)
@@ -47,9 +47,9 @@ m_Color(color)
     m_BulletColorMap = CreateBulletColorMap();
 }
 
-bool tBullet::render(SDL_Renderer* pRenderer)
+bool tWeapon::render(SDL_Renderer* pRenderer)
 {
-    bool success = m_pTexture->render(pRenderer, m_xPos - m_HalfWidth , m_yPos, &m_BulletColorMap.find(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(m_Type,m_Color))->second);
+    bool success = m_pTexture->render(pRenderer, m_xPos - m_HalfWidth , m_yPos, &m_BulletColorMap.find(std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>(m_Type,m_Color))->second);
     m_yPos -= m_Speed;
 
     if(m_yPos < 0 || m_yPos > SCREEN_HEIGHT)
@@ -63,9 +63,9 @@ bool tBullet::render(SDL_Renderer* pRenderer)
 //-----------------------------------------------------------------------------
 //!
 //-----------------------------------------------------------------------------
-std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect> tBullet::CreateBulletColorMap()
+std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect> tWeapon::CreateBulletColorMap()
 {
-    std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect> bulletMap;
+    std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect> bulletMap;
 
     SDL_Rect yellow_normal_bullet;
     yellow_normal_bullet.x = 11;
@@ -78,8 +78,8 @@ std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect> tBull
     yellow_super_bullet.w = SUPER_BULLET_WIDTH;
     yellow_super_bullet.h = SUPER_BULLET_HEIGHT;    
 
-    bulletMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Normal, tBullet::eBC_Yellow), yellow_normal_bullet));
-    bulletMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Super, tBullet::eBC_Yellow), yellow_super_bullet));
+    bulletMap.insert(std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect>::value_type(std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>(tWeapon::eBT_Normal, tWeapon::eBC_Yellow), yellow_normal_bullet));
+    bulletMap.insert(std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect>::value_type(std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>(tWeapon::eBT_Super, tWeapon::eBC_Yellow), yellow_super_bullet));
 
     SDL_Rect green_normal_bullet;
     green_normal_bullet.x = 29;
@@ -92,8 +92,8 @@ std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect> tBull
     green_super_bullet.w = SUPER_BULLET_WIDTH;
     green_super_bullet.h = SUPER_BULLET_HEIGHT;    
 
-    bulletMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Normal, tBullet::eBC_Green), green_normal_bullet));
-    bulletMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Super, tBullet::eBC_Green), green_super_bullet));
+    bulletMap.insert(std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect>::value_type(std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>(tWeapon::eBT_Normal, tWeapon::eBC_Green), green_normal_bullet));
+    bulletMap.insert(std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect>::value_type(std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>(tWeapon::eBT_Super, tWeapon::eBC_Green), green_super_bullet));
 
     SDL_Rect blue_normal_bullet;
     blue_normal_bullet.x = 47;
@@ -106,8 +106,8 @@ std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect> tBull
     blue_super_bullet.w = SUPER_BULLET_WIDTH;
     blue_super_bullet.h = SUPER_BULLET_HEIGHT;
 
-    bulletMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Normal, tBullet::eBC_Blue), blue_normal_bullet));
-    bulletMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Super, tBullet::eBC_Blue), blue_super_bullet));
+    bulletMap.insert(std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect>::value_type(std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>(tWeapon::eBT_Normal, tWeapon::eBC_Blue), blue_normal_bullet));
+    bulletMap.insert(std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect>::value_type(std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>(tWeapon::eBT_Super, tWeapon::eBC_Blue), blue_super_bullet));
 
     SDL_Rect pink_normal_bullet;
     pink_normal_bullet.x = 65;
@@ -120,8 +120,8 @@ std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect> tBull
     pink_super_bullet.w = SUPER_BULLET_WIDTH;
     pink_super_bullet.h = SUPER_BULLET_HEIGHT;    
 
-    bulletMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Normal, tBullet::eBC_Pink), pink_normal_bullet));
-    bulletMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Super, tBullet::eBC_Pink), pink_super_bullet));
+    bulletMap.insert(std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect>::value_type(std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>(tWeapon::eBT_Normal, tWeapon::eBC_Pink), pink_normal_bullet));
+    bulletMap.insert(std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect>::value_type(std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>(tWeapon::eBT_Super, tWeapon::eBC_Pink), pink_super_bullet));
 
     SDL_Rect blue_enemy_bullet;
     blue_enemy_bullet.x = 154;
@@ -129,7 +129,7 @@ std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect> tBull
     blue_enemy_bullet.w = 10;
     blue_enemy_bullet.h = 10;    
 
-    bulletMap.insert(std::map<std::pair<tBullet::eBulletType, tBullet::eBulletColor>, SDL_Rect>::value_type(std::pair<tBullet::eBulletType, tBullet::eBulletColor>(tBullet::eBT_Enemy, tBullet::eBC_Blue), blue_enemy_bullet));
+    bulletMap.insert(std::map<std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>, SDL_Rect>::value_type(std::pair<tWeapon::eBulletType, tWeapon::eBulletColor>(tWeapon::eBT_Enemy, tWeapon::eBC_Blue), blue_enemy_bullet));
 
     return bulletMap;
 }

@@ -37,9 +37,6 @@ bool tIntroState::Init(tGameEngine* pGame)
         }
         else
         {
-            // start off opaque
-	        m_Alpha = 255;
-
 	        m_pBackground->setBlendMode(SDL_BLENDMODE_BLEND);
             m_pBackground->setAlpha(m_Alpha);
             success = true;
@@ -80,25 +77,25 @@ void tIntroState::Update(tGameEngine* /*pGame*/, const double /*interpolation*/)
 
 	if (m_Alpha < 0)
     {
-		m_Alpha = 0;
+		m_Alpha = 255;
     }
 
-    //if(m_pBackground)
-    //{
-	   // m_pBackground->setAlpha(m_Alpha);
-    //}
+    if(m_pBackground)
+    {
+	    m_pBackground->setAlpha(m_Alpha);
+    }
 }
 
 void tIntroState::Draw(tGameEngine* pGame)
 {
     if(pGame->Renderer())
     {
-        SDL_SetRenderDrawColor(pGame->Renderer(), 0x0, 0x0, 0x0, 0x0);
+        SDL_SetRenderDrawColor(pGame->Renderer(), 255, 255, 255, 0x0);
         SDL_RenderClear(pGame->Renderer());
 
         if(m_pBackground)
         {
-            m_pBackground->render(pGame->Renderer(), 0, 0);
+            m_pBackground->render(pGame->Renderer(), 0, 0, 0, 0.0, 0, SDL_FLIP_NONE, true);
         }
 
         // Update screen

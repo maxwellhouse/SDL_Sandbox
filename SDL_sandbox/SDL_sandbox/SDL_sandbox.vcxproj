@@ -83,7 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="actor.h" />
-    <ClInclude Include="bullet.h" />
+    <ClInclude Include="weapon.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="gameEngine.h" />
     <ClInclude Include="gameStateBase.h" />
@@ -98,7 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="actor.cpp" />
-    <ClCompile Include="bullet.cpp" />
+    <ClCompile Include="weapon.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="gameEngine.cpp" />
     <ClCompile Include="gameStateBase.cpp" />

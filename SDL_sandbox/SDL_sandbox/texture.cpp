@@ -128,10 +128,16 @@ bool tTexture::loadFromRenderedText(std::string textureText, SDL_Color textColor
     return m_pTexture != NULL;
 }
 
-bool tTexture::render(SDL_Renderer* pRenderer, int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+bool tTexture::render(SDL_Renderer* pRenderer, int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip, const bool stretch)
 {
     // Set rendering space and render to screen
     SDL_Rect renderQuad = {x, y, m_Width, m_Height};
+
+    if(stretch)
+    {
+        renderQuad.w = SCREEN_WIDTH;
+        renderQuad.h = SCREEN_HEIGHT;
+    }
 
     // Set clip rendering dimensions
     if (clip != NULL)

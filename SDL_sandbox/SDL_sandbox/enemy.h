@@ -6,7 +6,7 @@
 #include <SDL.h>
 
 // Forward declare
-class tBullet;
+class tWeapon;
 class tTexture;
 class tCRSpline;
 // Animation sprite
@@ -23,11 +23,16 @@ public:
     bool isDead() const;
     void wasHit(const unsigned int damage);
     bool render(SDL_Renderer* pRenderer);
+    void move(const double time);
 
     SDL_Rect GetDeathClip(const unsigned int clip);
 private:
+    double m_Time;
     int m_Hp;
-    std::vector<tBullet*> m_currentBullets;
+    int m_CurrentEnemySpeed;
+    bool m_IsExploding;
+    int m_DeathFrame;
+    std::vector<tWeapon*> m_currentWeapons;
     tTexture* m_pExplosionTexture;
 
     std::vector<SDL_Rect> m_AnimationSpriteClips;

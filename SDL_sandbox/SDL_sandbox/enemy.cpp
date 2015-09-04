@@ -1,7 +1,7 @@
 #include "enemy.h"
 #include "globals.h"
 #include "texture.h"
-#include "bullet.h"
+#include "weapon.h"
 #include "Math/spline.h"
 
 #define MAX_BULLETS 100
@@ -10,9 +10,18 @@ float frand( float n )
     return ((n)*((float)rand() / (float)RAND_MAX));
 }
 
+int randBetween( const int min, const int max)
+{
+    return rand() % (max-min)+min;
+}
+
 tEnemy::tEnemy(unsigned int hp, int x, int y, tTexture* pTexture, tTexture* pExplosionTexture) :
 tActor(x,y, pTexture)
+, m_Time(0.0)
 , m_Hp(hp)
+, m_CurrentEnemySpeed(30)
+, m_IsExploding(false)
+, m_DeathFrame(0)
 , m_pExplosionTexture(pExplosionTexture)
 {
     //Set sprite clips
@@ -134,17 +143,24 @@ tActor(x,y, pTexture)
 
     // Create path
     m_pSplinePath = new tCRSpline();
-    m_pSplinePath->AddSplinePoint(tVector3D(static_cast<float>(m_xPos), static_cast<float>(m_yPos), 0.0f));
-    m_pSplinePath->AddSplinePoint(tVector3D(static_cast<float>(m_xPos), static_cast<float>(-SCREEN_HEIGHT), 0.0f));
+    tVector3D point1(static_cast<float>(m_xPos), static_cast<float>(m_yPos), 0.0f);
+    m_pSplinePath->AddSplinePoint(point1);
+    for(int i = 0; i < 2; i++)
+    {
+        tVector3D newPoint = tVector3D(randBetween(0, SCREEN_WIDTH), randBetween(point1.m_y, SCREEN_HEIGHT), 0.0f);
+        m_pSplinePath->AddSplinePoint(newPoint);
+        point1 = newPoint;
+    }
+    m_pSplinePath->AddSplinePoint(tVector3D(static_cast<float>(m_xPos), static_cast<float>(SCREEN_HEIGHT), 0.0f));
 }
 
 tEnemy::~tEnemy()
 {
-    for(std::vector<tBullet*>::iterator it = m_currentBullets.begin(); it != m_currentBullets.end(); ++it)
+    for(std::vector<tWeapon*>::iterator it = m_currentWeapons.begin(); it != m_currentWeapons.end(); ++it)
     {
         delete *it;
     }
-    m_currentBullets.clear();
+    m_currentWeapons.clear();
     if(m_pSplinePath)
     {
         delete m_pSplinePath;
@@ -155,10 +171,10 @@ tEnemy::~tEnemy()
 bool tEnemy::AddBullet(tTexture* pTexture)
 {
     bool success = false;
-    if(m_currentBullets.size() < MAX_BULLETS)
+    if(m_currentWeapons.size() < MAX_BULLETS)
     {
-        tBullet* bullet = new tBullet(m_xPos + m_HalfWidth, m_yPos, pTexture, tBullet::eBC_Blue, tBullet::eBT_Enemy);
-        m_currentBullets.push_back(bullet);
+        tWeapon* bullet = new tWeapon(m_xPos + m_HalfWidth, m_yPos, pTexture, tWeapon::eBC_Blue, tWeapon::eBT_Enemy);
+        m_currentWeapons.push_back(bullet);
         success = true;
     }
     return success;
@@ -166,7 +182,7 @@ bool tEnemy::AddBullet(tTexture* pTexture)
 
 bool tEnemy::Hit(const tActor* shotTarget)
 {
-    for(std::vector<tBullet*>::iterator bullet = m_currentBullets.begin(); bullet != m_currentBullets.end(); bullet++)
+    for(std::vector<tWeapon*>::iterator bullet = m_currentWeapons.begin(); bullet != m_currentWeapons.end(); bullet++)
     {
         if(shotTarget->checkCollison(*bullet))
         {
@@ -176,22 +192,54 @@ bool tEnemy::Hit(const tActor* shotTarget)
     return false;
 }
 
+void tEnemy::move(const double time)
+{
+    if(m_IsExploding == false)
+    {
+        m_Time += ( m_CurrentEnemySpeed * time );
+        tVector3D newPosition = m_pSplinePath->GetInterpolatedSplinePoint(static_cast<float>(m_Time / 100.0));
+        m_xPos = static_cast<int>(newPosition.m_x);
+        m_yPos = static_cast<int>(newPosition.m_y);
+        // If we are off the bottom then reset the time.
+        if(m_yPos > SCREEN_HEIGHT)
+        {
+            m_Time = 0;
+        }
+    }
+    else
+    {
+        m_DeathFrame++;
+    }
+}
+
 bool tEnemy::render(SDL_Renderer* pRenderer)
 {
-    tVector3D newPosition = m_pSplinePath->GetInterpolatedSplinePoint(m_xPos);
-    // Render player
-    bool success = m_pTexture->render(pRenderer, newPosition.m_x, newPosition.m_y);
-
-    // Render bullets fired
-    for(std::vector<tBullet*>::iterator it = m_currentBullets.begin(); it != m_currentBullets.end();)
+    bool success = true;
+    if(m_IsExploding == false)
     {
-        if((*it)->render(pRenderer) == false)
+        // Render player
+        success = m_pTexture->render(pRenderer, m_xPos, m_yPos);
+
+        // Render bullets fired
+        for(std::vector<tWeapon*>::iterator it = m_currentWeapons.begin(); it != m_currentWeapons.end();)
         {
-            it = m_currentBullets.erase(it);
+            if((*it)->render(pRenderer) == false)
+            {
+                it = m_currentWeapons.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
         }
-        else
+    }
+    else
+    {
+        m_pExplosionTexture->render(pRenderer, m_xPos, m_yPos, &GetDeathClip(m_DeathFrame));
+        m_DeathFrame++;
+        if(m_DeathFrame > m_AnimationSpriteClips.size())
         {
-            ++it;
+            m_DeathFrame = 0;
         }
     }
     return success;
@@ -212,11 +260,12 @@ void tEnemy::wasHit(const unsigned int damage)
     if(m_Hp < 0)
     {
         m_Hp = 0;
-        m_currentBullets.clear();
+        m_currentWeapons.clear();
+        m_IsExploding = true;
     }
 }
 
 bool tEnemy::isDead() const
 {
-    return m_Hp <= 0;
+    return m_Hp <= 0 && m_DeathFrame >= m_AnimationSpriteClips.size();
 }

@@ -45,11 +45,11 @@ int main(int argc, char* argv[])
             {
                 while( lag >= MAX_FRAMESKIP ) 
                 {
-                    pGameEngine->Update(lag / MAX_FRAMESKIP);
+                    pGameEngine->Update(elapsed / 1000.0);
                     lag -= MAX_FRAMESKIP;
                 } 
-
-                if(pGameEngine->Running())
+                lag = 0;
+                if(pGameEngine->Running() == true)
                 {
                     pGameEngine->Draw();
                 }

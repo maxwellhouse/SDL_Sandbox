@@ -23,20 +23,20 @@ tActor(x,y, pTexture)
 
 tPlayer::~tPlayer()
 {
-    for(std::vector<tBullet*>::iterator it = m_currentBullets.begin(); it != m_currentBullets.end(); ++it)
+    for(std::vector<tWeapon*>::iterator it = m_currentWeapons.begin(); it != m_currentWeapons.end(); ++it)
     {
         delete *it;
     }
-    m_currentBullets.clear();
+    m_currentWeapons.clear();
 }
 
-bool tPlayer::AddBullet(tTexture* pTexture, const tBullet::eBulletType type)
+bool tPlayer::AddBullet(tTexture* pTexture, const tWeapon::eBulletType type)
 {
     bool success = false;
-    if(m_currentBullets.size() < MAX_BULLETS)
+    if(m_currentWeapons.size() < MAX_BULLETS)
     {
-        tBullet* bullet = new tBullet(m_xPos + m_HalfWidth, m_yPos, pTexture, static_cast<tBullet::eBulletColor>(roll(0,4)), type);
-        m_currentBullets.push_back(bullet);
+        tWeapon* bullet = new tWeapon(m_xPos + m_HalfWidth, m_yPos, pTexture, static_cast<tWeapon::eBulletColor>(roll(0,4)), type);
+        m_currentWeapons.push_back(bullet);
         success = true;
     }
     return success;
@@ -44,11 +44,11 @@ bool tPlayer::AddBullet(tTexture* pTexture, const tBullet::eBulletType type)
 
 bool tPlayer::Hit(const tActor* shotTarget)
 {
-    for(std::vector<tBullet*>::iterator bullet = m_currentBullets.begin(); bullet != m_currentBullets.end();)
+    for(std::vector<tWeapon*>::iterator bullet = m_currentWeapons.begin(); bullet != m_currentWeapons.end();)
     {
         if(shotTarget->checkCollison(*bullet))
         {
-            bullet = m_currentBullets.erase(bullet);
+            bullet = m_currentWeapons.erase(bullet);
             return true;
         }
         else
@@ -65,11 +65,11 @@ bool tPlayer::render(SDL_Renderer* pRenderer)
     bool success = m_pTexture->render(pRenderer, m_xPos, m_yPos);
 
     // Render bullets fired
-    for(std::vector<tBullet*>::iterator it = m_currentBullets.begin(); it != m_currentBullets.end();)
+    for(std::vector<tWeapon*>::iterator it = m_currentWeapons.begin(); it != m_currentWeapons.end();)
     {
         if((*it)->render(pRenderer) == false)
         {
-            it = m_currentBullets.erase(it);
+            it = m_currentWeapons.erase(it);
         }
         else
         {

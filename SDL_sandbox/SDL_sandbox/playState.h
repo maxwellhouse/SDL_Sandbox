@@ -45,8 +45,6 @@ private:
     // Game objects
     tPlayer* m_pPlayer;
     std::vector<tEnemy*> m_Enemies;
-    int m_EnemyXPos;
-    int m_CurrentEnemySpeed;
     int m_BackgroundXPos;
     int m_BackgroundYPos;
 
@@ -59,7 +57,7 @@ private:
     tTexture* m_pBackgroundTexture;
     // Player texture
     tTexture* m_pPlayerTexture;
-    tTexture* m_pSpriteSheetBullets;
+    tTexture* m_pSpriteSheetWeapons;
     // Enemy textures
     tTexture* m_pEnemyTexture;
     tTexture* m_pEnemyExplosionTexture;

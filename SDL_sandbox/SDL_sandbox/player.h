@@ -2,11 +2,11 @@
 #define PLAYER_H
 
 #include "actor.h"
-#include "bullet.h"
+#include "weapon.h"
 #include <vector>
 
 // Forward declare
-class tBullet;
+class tWeapon;
 class tTexture;
 struct SDL_Renderer;
 
@@ -16,7 +16,7 @@ public:
     tPlayer::tPlayer(unsigned int hp, int x, int y, tTexture* pTexture);
     tPlayer::~tPlayer();
 
-    bool AddBullet(tTexture* pTexture, const tBullet::eBulletType type);
+    bool AddBullet(tTexture* pTexture, const tWeapon::eBulletType type);
 
     bool Hit(const tActor* shotTarget);
 
@@ -24,7 +24,7 @@ public:
 
 private:
     unsigned int m_Hp;
-    std::vector<tBullet*> m_currentBullets;
+    std::vector<tWeapon*> m_currentWeapons;
 };
 
 #endif  // PLAYER_H
